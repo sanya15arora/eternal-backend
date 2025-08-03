@@ -73,6 +73,48 @@ router.get('/trending', async (req, res) => {
     }
 });
 
+//Get Product by category
+router.get('/category/:category', async (req, res) => {
+    try {
+        const category = req.params.category.toLowerCase();
+        const products = await Products.find({ category: category });
+
+        if (products.length === 0) {
+            return res.status(404).json({ message: 'No products found in this category' });
+        }
+
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+// Search Product
+router.get('/search', async (req, res) => {
+    try {
+        const query = req.query.q;
+
+        if (!query) {
+            return res.status(400).json({ message: 'Query is required' });
+        }
+
+        const regex = new RegExp(query, 'i');
+
+        const products = await Products.find({
+            $or: [
+                { name: { $regex: regex } },
+                { description: { $regex: regex } },
+                { category: { $regex: regex } }
+            ]
+        });
+        res.json(products);
+    } catch (error) {
+        console.error('Search Error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // Get a single product by ID
 router.get('/:id', async (req, res) => {
     try {
@@ -168,6 +210,8 @@ router.get('/related/:id', async (req, res) => {
         res.status(500).json({ message: 'Error fetching the related products' });
     }
 });
+
+
 
 
 

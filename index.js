@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({
-    origin: 'https://eternal-ecommerce.vercel.app',
+    origin: process.env.CLIENT_URL,
     credentials: true,
     // methods: ['GET', 'POST', 'PUT', 'DELETE'],
     // allowedHeaders: ['Content-Type', 'Authorization'],
@@ -31,12 +31,14 @@ const productRoutes = require('./src/products/products.route');
 const reviewRoutes = require('./src/reviews/reviews.route');
 const orderRoutes = require('./src/orders/orders.route');
 const statsRoutes = require('./src/stats/stats.route');
+const contactRoutes = require('./src/contact/contact.route');
 
 app.use('/api/auth/user', authRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/review', reviewRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/contact', contactRoutes);
 
 
 main().then(() => console.log("Mongodb is successfully connected.")).catch(err => console.log(err));
