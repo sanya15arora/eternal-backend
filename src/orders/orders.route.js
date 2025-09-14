@@ -218,4 +218,28 @@ router.delete('/delete/:id', verifyToken, verifyAdmin, async (req, res) => {
     }
 });
 
+//User Has purchased the product
+router.get("/has-purchased/:userId/:productId", async (req, res) => {
+    try {
+        const { userId, productId } = req.params;
+
+        const order = await Orders.findOne({
+            userId,
+            status: "completed",
+            products: {
+                $elemMatch: { productId: productId, quantity: { $gt: 0 } }
+            }
+        });
+
+        if (order) {
+            return res.json({ hasPurchased: true });
+        } else {
+            return res.json({ hasPurchased: false });
+        }
+    } catch (error) {
+        console.error("Error checking purchase:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 module.exports = router;
